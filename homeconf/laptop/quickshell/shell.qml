@@ -237,7 +237,7 @@ ShellRoot {
         id: batteryProc
         command: ["sh", "-c",
             "cap=$(cat /sys/class/power_supply/BAT*/capacity 2>/dev/null | head -1); " +
-            "ac=$(cat /sys/class/power_supply/AC*/online /sys/class/power_supply/ACAD*/online 2>/dev/null | head -1); " +
+            "ac=$(cat /sys/class/power_supply/AC*/online /sys/class/power_supply/ACAD*/online /sys/class/power_supply/ADP*/online 2>/dev/null | head -1); " +
             "echo ${cap:--1} ${ac:-0}"]
         stdout: SplitParser {
             onRead: data => {
