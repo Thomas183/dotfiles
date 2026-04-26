@@ -30,6 +30,10 @@ ShellRoot {
     property int    volumeLevel:     0
     property int    brightnessLevel: 100
 
+    property int    batteryLevel:    0
+    property bool   batteryCharging: false
+    property string powerProfile:    "balanced"
+
     // Previous-tick values used to compute the CPU usage delta
     property int cpuPrevIdle:  0
     property int cpuPrevTotal: 0
@@ -226,6 +230,39 @@ ShellRoot {
     Process { id: shutdownProc; command: ["systemctl", "poweroff"] }
     Process { id: rebootProc;   command: ["systemctl", "reboot"]   }
 
+    // Battery level and AC adapter state — capacity from BAT*/capacity,
+    // plugged-in state from AC*/online (1 = plugged, 0 = on battery).
+    // Using the AC online file avoids the "Full" vs "Charging" ambiguity.
+    Process {
+        id: batteryProc
+        command: ["sh", "-c",
+            "cap=$(cat /sys/class/power_supply/BAT*/capacity 2>/dev/null | head -1); " +
+            "ac=$(cat /sys/class/power_supply/AC*/online /sys/class/power_supply/ACAD*/online 2>/dev/null | head -1); " +
+            "echo ${cap:--1} ${ac:-0}"]
+        stdout: SplitParser {
+            onRead: data => {
+                if (!data) return
+                const parts = data.trim().split(/\s+/)
+                const lvl   = parseInt(parts[0])
+                if (!isNaN(lvl) && lvl >= 0) batteryLevel = lvl
+                batteryCharging = parts[1] === "1"
+            }
+        }
+        Component.onCompleted: running = true
+    }
+
+    // Power profile — read once at startup; updated optimistically on each cycle
+    Process {
+        id: powerProfileReadProc
+        command: ["powerprofilesctl", "get"]
+        stdout: SplitParser {
+            onRead: data => { if (data) powerProfile = data.trim() }
+        }
+        Component.onCompleted: running = true
+    }
+
+    Process { id: powerProfileSetProc }   // applies a new power profile
+
     // ─────────────────────────────────────────────────────────────────────────
     // Functions
     // ─────────────────────────────────────────────────────────────────────────
@@ -276,6 +313,15 @@ ShellRoot {
         // networkProc will pick up the new connection on the next polling tick
     }
 
+    // Cycle power profile: power-saver → balanced → performance → power-saver …
+    function cyclePowerProfile() {
+        const profiles = ["power-saver", "balanced", "performance"]
+        const next = profiles[(profiles.indexOf(powerProfile) + 1) % profiles.length]
+        powerProfileSetProc.command = ["powerprofilesctl", "set", next]
+        powerProfileSetProc.running = true
+        powerProfile = next
+    }
+
     // Close the control panel and reset all child views back to their defaults
     function closeAllPanels() {
         controlPanelOpen    = false
@@ -299,6 +345,7 @@ ShellRoot {
             diskProc.running       = true
             volumeReadProc.running = true
             networkProc.running    = true
+            batteryProc.running    = true
             if (networkType === "wifi") wifiSignalProc.running = true
         }
     }

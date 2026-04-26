@@ -117,6 +117,10 @@ PanelWindow {
             Layout.rightMargin: 8
         }
 
+        // ── Battery + power profile module ───────────────────────────────────
+        BarSep {}
+        BatteryModule {}
+
         // ── Status + Clock button ─────────────────────────────────────────────
         // Displays [network icon] | [HH:mm] | [NixOS logo]
         // Clicking anywhere on the button toggles the control panel.

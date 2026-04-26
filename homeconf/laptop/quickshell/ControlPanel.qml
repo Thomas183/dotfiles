@@ -226,7 +226,7 @@ PanelWindow {
                         border.width: 1
                         Text {
                             anchors.centerIn: parent
-                            text:           "Shutdown"
+                            text:           "⏻  Shutdown"
                             color:          root.colRed
                             font.pixelSize: root.fontSize
                             font.family:    root.fontFamily
@@ -247,7 +247,7 @@ PanelWindow {
                         border.width: 1
                         Text {
                             anchors.centerIn: parent
-                            text:           "Restart"
+                            text:           "↺  Restart"
                             color:          root.colYellow
                             font.pixelSize: root.fontSize
                             font.family:    root.fontFamily

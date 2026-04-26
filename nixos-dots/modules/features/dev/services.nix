@@ -1,3 +1,4 @@
+# Docker + Portainer container management
 {
   self,
   ...
@@ -6,10 +7,6 @@
   flake.nixosModules.services =
     { pkgs, ... }:
     {
-      environment.systemPackages = with pkgs; [
-        tailscale
-      ];
-
       virtualisation.docker.enable = true;
 
       virtualisation.oci-containers = {

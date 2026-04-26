@@ -5,7 +5,6 @@
       config,
       lib,
       pkgs,
-      self,
       ...
     }:
     {
@@ -21,10 +20,10 @@
         self.nixosModules.common
       ];
 
-	  swapDevices = [{
-	  	device = "/swapfile";
-	  	size = 16*1024;
-	  }];
+      swapDevices = [{
+        device = "/swapfile";
+        size = 16*1024;
+      }];
 
       nix.settings.experimental-features = [
         "nix-command"
@@ -35,10 +34,11 @@
       i18n.defaultLocale = "en_US.UTF-8";
       console.keyMap = "be-latin1";
 
-      environment.systemPackages = with pkgs; [
+      services.xserver.xkb = {
+        layout = "be";
+        variant = "";
+      };
 
-
-      ];
 
       users.users.thomas = {
         isNormalUser = true;
@@ -76,8 +76,8 @@
       boot.kernelModules = [ "uinput" ];
 
       services.udev.extraRules = ''
-        	  KERNEL=="uinput", GROUP="input", MODE="0660"
-        	'';
+        KERNEL=="uinput", GROUP="input", MODE="0660"
+      '';
 
       services.getty.autologinUser = "thomas";
 
@@ -139,7 +139,7 @@
         package = config.boot.kernelPackages.nvidiaPackages.stable;
       };
 
-      ### Think Before Editing Section Under ###
+      # Boot & Networking
 
       boot.loader.systemd-boot.enable = true;
       boot.loader.efi.canTouchEfiVariables = true;

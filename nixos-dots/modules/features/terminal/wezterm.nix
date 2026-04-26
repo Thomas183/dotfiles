@@ -1,3 +1,4 @@
+# Shell (zsh) + terminal emulator + CLI tools
 {
   self,
   ...

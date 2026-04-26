@@ -1,3 +1,4 @@
+# Desktop apps shared across all hosts (browsers, media, communication)
 {
   self,
   ...
@@ -10,7 +11,6 @@
     {
       environment.systemPackages = with pkgs; [
         wget
-        git
         gh
         qutebrowser
         brave

@@ -1,3 +1,4 @@
+# Wayland compositor (Hyprland) + audio (PipeWire) + XDG portal
 {
   self,
   inputs,
