@@ -46,7 +46,7 @@
 
       programs.zsh.loginShellInit = ''
         if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" = "1" ]; then
-          exec Hyprland
+          exec start-hyprland
         fi
       '';
 

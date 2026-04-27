@@ -26,6 +26,7 @@
         qbittorrent
         mpv
         termius
+        inxi
       ];
 
       services.udisks2.enable = true;

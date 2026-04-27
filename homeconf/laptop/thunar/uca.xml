@@ -12,4 +12,16 @@
 	<startup-notify/>
 	<directories/>
 </action>
+<action>
+	<icon>archive-extract</icon>
+	<name>Extract to Subfolder</name>
+	<submenu></submenu>
+	<unique-id>extract-subfolder-nixos-1</unique-id>
+	<command>thunar-extract-subfolder %f</command>
+	<description>Extract archive to a folder of the same name</description>
+	<range></range>
+	<patterns>*.zip;*.ZIP;*.tar.gz;*.tar.bz2;*.tar.xz;*.tgz;*.tbz2;*.txz;*.tar;*.7z</patterns>
+	<startup-notify/>
+	<other-files/>
+</action>
 </actions>
