@@ -82,6 +82,8 @@ Canvas {
         target: root
         function onNetworkTypeChanged() { networkIcon.requestPaint() }
         function onWifiSignalChanged()  { networkIcon.requestPaint() }
+        function onColCyanChanged()     { networkIcon.requestPaint() }
+        function onColMutedChanged()    { networkIcon.requestPaint() }
     }
     Component.onCompleted: requestPaint()
 }
