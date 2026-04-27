@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal for the configuration files of my NixOS setup. I am still very new to this so if someone somehow finds this, it is probably not a good idea to copy any of what I am doing here. There is also a pretty good deal of vibe configuring :)
+Personal repository for the configuration files of my NixOS setup. I am still very new to this so if someone somehow finds this, it is probably not a good idea to copy any of what I am doing here. There is also a pretty good deal of vibe configuring :)
 
 ## Repo layout
 
