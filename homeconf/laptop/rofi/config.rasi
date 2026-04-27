@@ -1,4 +1,16 @@
-
-//@theme "/nix/store/kc4badc137rhmgykhcvdc1yik2niqnmh-rofi-2.0.0/share/rofi/themes/android_notification.rasi"
-
-@theme "/nix/store/x2z809xiyb6ip74zxi0n5sb2vaqf52ry-rofi-2.0.0/share/rofi/themes/android_notification.rasi"
+configuration {
+    modes:               "drun,script:~/.config/rofi/scripts/launcher.sh";
+    show-icons:          true;
+    icon-theme:          "CybrCyanPapirus";
+    display-drun:        "Apps";
+    display-script:      "Scripts";
+    drun-display-format: "{name}";
+    font:                "monospace 11";
+    kb-mode-next:        "Tab";
+    kb-mode-previous:    "Shift+Tab";
+    kb-row-tab:          "Control+Tab";
+    kb-element-next:     "Control+period";
+    kb-row-up:           "Up,Control+p";
+    kb-element-prev:     "Control+comma";
+}
+@theme "~/.config/rofi/cybrcyan.rasi"

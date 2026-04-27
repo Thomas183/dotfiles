@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+pkill rofi
+sleep 0.05
+choice=$(printf "Shutdown\nReboot\nSuspend\nLock" | rofi -dmenu -p "Power" -theme-str 'window { width: 20%; }')
+case "$choice" in
+    Shutdown) systemctl poweroff ;;
+    Reboot)   systemctl reboot ;;
+    Suspend)  systemctl suspend ;;
+    Lock)     hyprctl dispatch exec hyprlock ;;
+esac

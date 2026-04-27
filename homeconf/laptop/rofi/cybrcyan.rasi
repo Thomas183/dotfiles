@@ -1,0 +1,96 @@
+@import "colors.rasi"
+
+* {
+    background-color: transparent;
+    text-color:       @fg;
+    border:           0;
+    margin:           0;
+    padding:          0;
+    spacing:          0;
+}
+
+window {
+    background-color: @bg;
+    border:           2px solid;
+    border-color:     @border-col;
+    border-radius:    10px;
+    padding:          12px;
+    width:            38%;
+}
+
+mainbox {
+    background-color: transparent;
+    children:         [ mode-switcher, inputbar, listview ];
+    spacing:          10px;
+}
+
+mode-switcher {
+    background-color: transparent;
+    spacing:          6px;
+}
+
+button {
+    background-color: @bg-alt;
+    border-radius:    6px;
+    padding:          6px 20px;
+    text-color:       @fg;
+    cursor:           pointer;
+}
+
+button selected {
+    background-color: @bg-sel;
+    text-color:       @fg-sel;
+    border:           1px solid;
+    border-color:     @border-col;
+}
+
+inputbar {
+    background-color: @bg-alt;
+    border-radius:    6px;
+    padding:          8px 12px;
+    spacing:          8px;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    text-color:     @border-col;
+    vertical-align: 0.5;
+}
+
+entry {
+    placeholder:       "Search...";
+    placeholder-color: @placeholder-col;
+    vertical-align:    0.5;
+}
+
+listview {
+    background-color: transparent;
+    columns:          1;
+    lines:            8;
+    scrollbar:        false;
+    spacing:          3px;
+}
+
+element {
+    background-color: transparent;
+    border-radius:    6px;
+    padding:          7px 10px;
+    spacing:          10px;
+    orientation:      horizontal;
+}
+
+element selected {
+    background-color: @bg-sel;
+    text-color:       @fg-sel;
+    border:           1px solid;
+    border-color:     @border-col;
+}
+
+element-icon {
+    size:           22px;
+    vertical-align: 0.5;
+}
+
+element-text {
+    vertical-align: 0.5;
+}
