@@ -93,6 +93,7 @@
                 icon-theme = "CybrCyanPapirus";
                 cursor-theme = "Bibata-Modern-Ice";
                 cursor-size = lib.gvariant.mkInt32 24;
+                color-scheme = "prefer-dark";
               };
             };
           }
