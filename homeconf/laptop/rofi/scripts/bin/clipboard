@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+pkill rofi
+sleep 0.05
+cliphist list | rofi -dmenu -p "Clipboard" | cliphist decode | wl-copy

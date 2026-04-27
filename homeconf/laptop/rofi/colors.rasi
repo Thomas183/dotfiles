@@ -1,0 +1,10 @@
+/* CybrCyan palette — generated from colors.sh, do not edit manually */
+* {
+    bg:              #0a0a0f;
+    bg-alt:          #12121e;
+    bg-sel:          #00bcd426;
+    border-col:      #00bcd4;
+    fg:              #cdd6f4;
+    fg-sel:          #00e5ff;
+    placeholder-col: #444466;
+}

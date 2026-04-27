@@ -72,6 +72,7 @@
         thunar
         bibata-cursors
         quickshell
+        inotify-tools
         cybrCyanThemes
         extractScript
         unzip
