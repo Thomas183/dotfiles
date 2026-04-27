@@ -7,11 +7,11 @@ import QtQuick
 ShellRoot {
     id: root
 
-    // ── Theme — Tokyo Night palette ───────────────────────────────────────────
-    property color colBg:     "#1a1b26"
-    property color colFg:     "#a9b1d6"
-    property color colMuted:  "#444b6a"
-    property color colCyan:   "#0db9d7"
+    // ── Theme — CybrCyan palette (mirrors homeconf/laptop/colors.sh) ─────────
+    property color colBg:     "#0a0a0f"
+    property color colFg:     "#cdd6f4"
+    property color colMuted:  "#444466"
+    property color colCyan:   "#00bcd4"
     property color colPurple: "#ad8ee6"
     property color colRed:    "#f7768e"
     property color colYellow: "#e0af68"
