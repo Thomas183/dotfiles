@@ -100,6 +100,18 @@
         ];
       };
 
+      system.userActivationScripts.gtkButtonTextFix = ''
+        css="$HOME/.config/gtk-3.0/gtk.css"
+        mkdir -p "$(dirname "$css")"
+        touch "$css"
+        if ! grep -qF 'fix-invisible-button-text' "$css"; then
+          cat >> "$css" <<'EOF'
+/* fix-invisible-button-text */
+button label { color: @theme_fg_color; }
+EOF
+        fi
+      '';
+
       system.userActivationScripts.thunarExtractAction = ''
         uca="$HOME/.config/Thunar/uca.xml"
         mkdir -p "$(dirname "$uca")"
