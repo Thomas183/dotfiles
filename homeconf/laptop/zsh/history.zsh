@@ -18,5 +18,3 @@ setopt HIST_VERIFY
 
 # Sharing
 setopt SHARE_HISTORY
-setopt APPEND_HISTORY
-setopt INC_APPEND_HISTORY
