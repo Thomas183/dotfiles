@@ -2,6 +2,9 @@
 # ALIASES — GENERAL
 # ════════════════════════════════════════════════════════════════
 
+# NixOS
+alias rebuild='sudo nixos-rebuild switch --flake "/home/thomas/dotfiles/nixos#laptop"'
+
 # List directory contents with eza or fallback to ls
 if command -v eza &>/dev/null; then
   alias ls='eza --icons --group-directories-first'
