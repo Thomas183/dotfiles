@@ -14,7 +14,9 @@
         gh
         qutebrowser
         brave
+        vesktop
         discord
+        obs-studio
         whatsapp-electron
         jellyfin-desktop
         spotify
