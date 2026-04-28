@@ -8,31 +8,6 @@
   flake.nixosModules.hyprland =
     { pkgs, inputs, lib, ... }:
     let
-      extractScript = pkgs.writeShellScriptBin "thunar-extract-subfolder" ''
-        set -e
-        archive="$1"
-        dir="$(dirname "$archive")"
-        base="$(basename "$archive")"
-        case "$base" in
-          *.tar.gz|*.tar.bz2|*.tar.xz|*.tar.zst) name="''${base%.*.*}" ;;
-          *) name="''${base%.*}" ;;
-        esac
-        outdir="$dir/$name"
-        mkdir -p "$outdir"
-        case "$base" in
-          *.zip|*.ZIP)       ${pkgs.unzip}/bin/unzip "$archive" -d "$outdir" ;;
-          *.tar.gz|*.tgz)   tar xzf "$archive" -C "$outdir" ;;
-          *.tar.bz2|*.tbz2) tar xjf "$archive" -C "$outdir" ;;
-          *.tar.xz|*.txz)   tar xJf "$archive" -C "$outdir" ;;
-          *.tar.zst)         tar --zstd -xf "$archive" -C "$outdir" ;;
-          *.tar)             tar xf "$archive" -C "$outdir" ;;
-          *.7z)              ${pkgs.p7zip}/bin/7z x "$archive" -o"$outdir" ;;
-          *)
-            echo "Unsupported archive: $base" >&2
-            rmdir "$outdir" 2>/dev/null || true
-            exit 1 ;;
-        esac
-      '';
 
       cybrCyanThemes = pkgs.stdenv.mkDerivation {
         name = "cybrcyan-themes";
@@ -48,6 +23,7 @@
           cp -r CybrCyanPapirus $out/share/icons/
         '';
       };
+      
     in
     {
       programs.hyprland = {
@@ -74,14 +50,18 @@
         quickshell
         inotify-tools
         cybrCyanThemes
-        extractScript
         unzip
         p7zip
+        qt6.qtwayland
+        qt5.qtwayland
       ];
 
       environment.sessionVariables = {
         XCURSOR_THEME = "Bibata-Modern-Ice";
         XCURSOR_SIZE = "24";
+        NIXOS_OZONE_WL = "1";
+        QT_QPA_PLATFORM = "wayland;xcb";
+
       };
 
       programs.dconf = {
@@ -101,39 +81,20 @@
         ];
       };
 
-      system.userActivationScripts.gtkButtonTextFix = ''
-        css="$HOME/.config/gtk-3.0/gtk.css"
-        mkdir -p "$(dirname "$css")"
-        touch "$css"
-        if ! grep -qF 'fix-invisible-button-text' "$css"; then
-          cat >> "$css" <<'EOF'
-/* fix-invisible-button-text */
-button label { color: @theme_fg_color; }
-EOF
-        fi
-      '';
-
-      system.userActivationScripts.thunarExtractAction = ''
-        uca="$HOME/.config/Thunar/uca.xml"
-        mkdir -p "$(dirname "$uca")"
-        if [ ! -f "$uca" ]; then
-          printf '<?xml version="1.0" encoding="UTF-8"?>\n<actions>\n</actions>\n' > "$uca"
-        fi
-        if ! grep -qF 'extract-subfolder-nixos-1' "$uca"; then
-          sed -i 's|</actions>|<action>\n\t<icon>archive-extract</icon>\n\t<name>Extract to Subfolder</name>\n\t<submenu></submenu>\n\t<unique-id>extract-subfolder-nixos-1</unique-id>\n\t<command>thunar-extract-subfolder %f</command>\n\t<description>Extract archive to a folder of the same name</description>\n\t<range></range>\n\t<patterns>*.zip;*.ZIP;*.tar.gz;*.tar.bz2;*.tar.xz;*.tgz;*.tbz2;*.txz;*.tar;*.7z</patterns>\n\t<startup-notify/>\n\t<other-files/>\n</action>\n</actions>|' "$uca"
-        fi
-      '';
+      # security.rtkit.enable = true;
 
       services.pipewire = {
         enable = true;
         alsa.enable = true;
         pulse.enable = true;
+        wireplumber.enable = true;
       };
 
       xdg.portal = {
         enable = true;
-        extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-        config.common.default = "*";
-      };
+          extraPortals = with pkgs; [
+            xdg-desktop-portal-gtk
+            ];
+        };
     };
 }
