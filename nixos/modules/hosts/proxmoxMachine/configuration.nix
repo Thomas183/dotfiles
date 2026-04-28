@@ -12,7 +12,7 @@
       imports = [
         self.nixosModules.proxmoxMachineHardware
 
-        self.nixosModules.hyprland
+        self.nixosModules.desktop
         self.nixosModules.terminal
         self.nixosModules.jetbrains
         self.nixosModules.services

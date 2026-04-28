@@ -11,7 +11,7 @@
 
         self.nixosModules.common
         self.nixosModules.terminal
-        self.nixosModules.hyprland
+        self.nixosModules.desktop
         self.nixosModules.gaming
         self.nixosModules.jetbrains
         self.nixosModules.services
