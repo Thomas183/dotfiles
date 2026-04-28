@@ -1,0 +1,39 @@
+# System and editor files
+.DS_Store
+.swp
+.swo
+*.swp
+*~
+.vscode/
+.idea/
+
+# NixOS flake lock file (contains resolved dependencies)
+# flake.lock (usually should be committed)
+
+# Sensitive configurations
+homeconf/laptop/git/
+homeconf/laptop/gh/config.yml
+
+# Cache and build artifacts
+*.o
+*.so
+*.dylib
+result
+result-*
+
+# Micro editor backups
+homeconf/laptop/micro/.history
+
+# WezTerm state
+.wezterm_cache
+
+# Zsh history (if you don't want to version it)
+# homeconf/laptop/zsh/.history
+
+# Runtime and temporary files
+*.pid
+*.log
+.cache/
+
+# NixOS derivations
+.derivation
