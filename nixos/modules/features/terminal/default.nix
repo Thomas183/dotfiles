@@ -1,4 +1,4 @@
-# Composite terminal module: splits shell config and tools
+# Composite terminal module: shell config and CLI/GUI tools
 {
   self,
   ...
