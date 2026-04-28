@@ -13,10 +13,7 @@
         self.nixosModules.terminal
         self.nixosModules.desktop
         self.nixosModules.gaming
-        self.nixosModules.jetbrains
-        self.nixosModules.services
-        self.nixosModules.tools
-        self.nixosModules.lamp
+        self.nixosModules.dev
       ];
 
       services.lamp = {

@@ -13,11 +13,9 @@
         self.nixosModules.proxmoxMachineHardware
 
         self.nixosModules.desktop
-        self.nixosModules.terminal
-        self.nixosModules.jetbrains
-        self.nixosModules.services
-        self.nixosModules.tools
-        self.nixosModules.common
+          self.nixosModules.terminal
+          self.nixosModules.dev
+          self.nixosModules.common
       ];
 
       swapDevices = [{
