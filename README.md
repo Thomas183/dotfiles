@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal NixOS configuration for two machines — a laptop and a Proxmox VM — using a declarative, modular flake setup.
+Personal repository for my first attempt at using NixOS, if you somehow found this repo, it is probably not a good idea to reproduce my setup as I am still learning. There is also a pretty good deal of "Vibe Configuring", the following documentation is AI generated.
 
 > [!NOTE]
 > This repo does **not** use Home Manager. System configuration is handled entirely through NixOS modules. User-level app config (Hyprland, Wezterm, Zsh, Rofi…) lives in `homeconf/` as plain files and is symlinked manually.
