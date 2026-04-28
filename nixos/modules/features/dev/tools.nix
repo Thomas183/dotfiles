@@ -26,6 +26,7 @@
         nodejs
         figma-linux
         claude-code
+        helix
       ];
     };
 }

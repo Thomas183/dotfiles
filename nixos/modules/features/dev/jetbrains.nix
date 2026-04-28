@@ -14,6 +14,7 @@
         jetbrains.webstorm
         jetbrains.datagrip
         jetbrains.pycharm-oss
+        jetbrains.idea
       ];
     };
 }
