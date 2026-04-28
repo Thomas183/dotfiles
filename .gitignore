@@ -7,9 +7,6 @@
 .vscode/
 .idea/
 
-# NixOS flake lock file (contains resolved dependencies)
-# flake.lock (usually should be committed)
-
 # Sensitive configurations
 homeconf/laptop/git/
 homeconf/laptop/gh/config.yml
