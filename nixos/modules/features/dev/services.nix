@@ -1,13 +1,12 @@
 # Docker + Portainer container management
+{ self, ... }:
 {
-  self,
-  ...
-}:
-{
-  flake.nixosModules.services =
+  flake.nixosModules.devServices =
     { pkgs, ... }:
     {
       virtualisation.docker.enable = true;
+
+      users.users.thomas.extraGroups = [ "docker" ];
 
       virtualisation.oci-containers = {
         backend = "docker";

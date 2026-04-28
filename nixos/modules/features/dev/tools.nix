@@ -1,32 +1,30 @@
 # Development packages, language runtimes, and editors
+{ self, ... }:
 {
-  self,
-  ...
-}:
-
-{
-
-  flake.nixosModules.tools =
-    { pkgs, ... }:
+  flake.nixosModules.devTools =
+    { pkgs, config, lib, ... }:
     {
-      environment.systemPackages = with pkgs; [
-        symfony-cli
-        php85
-        apacheHttpd
-        nil
-        nixd
-        d2
-        python315
-        zed-editor-fhs
-        vscode-fhs
-        docker
-        filezilla
-        docker-client
-        gnome-builder
-        nodejs
-        figma-linux
-        claude-code
-        helix
-      ];
+      environment.systemPackages =
+        (with pkgs; [
+          symfony-cli
+          php85
+          apacheHttpd
+          nil
+          nixd
+          d2
+          python315
+          docker
+          docker-client
+          nodejs
+          claude-code
+          helix
+        ])
+        ++ lib.optionals (!config.myConfig.headless) (with pkgs; [
+          zed-editor-fhs
+          vscode-fhs
+          filezilla
+          gnome-builder
+          figma-linux
+        ]);
     };
 }

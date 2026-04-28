@@ -1,20 +1,15 @@
-# JetBrains IDEs (PhpStorm, WebStorm, DataGrip, PyCharm)
+# JetBrains IDEs (GUI only)
+{ self, ... }:
 {
-  self,
-  ...
-}:
-
-{
-
-  flake.nixosModules.jetbrains =
-    { pkgs, ... }:
+  flake.nixosModules.devJetbrains =
+    { pkgs, config, lib, ... }:
     {
-      environment.systemPackages = with pkgs; [
+      environment.systemPackages = lib.optionals (!config.myConfig.headless) (with pkgs; [
         jetbrains.phpstorm
         jetbrains.webstorm
         jetbrains.datagrip
         jetbrains.pycharm-oss
         jetbrains.idea
-      ];
+      ]);
     };
 }

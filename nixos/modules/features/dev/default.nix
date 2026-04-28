@@ -1,17 +1,14 @@
 # Composite dev module: groups jetbrains, lamp, services, and tools
-{
-  self,
-  ...
-}:
+{ self, ... }:
 {
   flake.nixosModules.dev =
     { ... }:
     {
       imports = [
-        self.nixosModules.jetbrains
+        self.nixosModules.devJetbrains
         self.nixosModules.lamp
-        self.nixosModules.services
-        self.nixosModules.tools
+        self.nixosModules.devServices
+        self.nixosModules.devTools
       ];
     };
 }
