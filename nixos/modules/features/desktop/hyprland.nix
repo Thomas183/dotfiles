@@ -20,5 +20,11 @@
         qt6.qtwayland
         qt5.qtwayland
       ];
+
+      programs.zsh.loginShellInit = ''
+        if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" = "1" ]; then
+          exec Hyprland
+        fi
+      '';
     };
 }

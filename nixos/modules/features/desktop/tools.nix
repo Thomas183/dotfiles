@@ -10,8 +10,6 @@
         dunst
         thunar
         quickshell
-        unzip
-        p7zip
       ];
     };
 }
