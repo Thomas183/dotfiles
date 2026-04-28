@@ -1,37 +1,16 @@
-# Desktop apps shared across all hosts (browsers, media, communication)
+# Composite common module: separates apps and system services
 {
   self,
   ...
 }:
 
 {
-
   flake.nixosModules.common =
-    { pkgs, ... }:
+    { ... }:
     {
-      environment.systemPackages = with pkgs; [
-        wget
-        gh
-        qutebrowser
-        brave
-        vesktop
-        discord
-        obs-studio
-        whatsapp-electron
-        jellyfin-desktop
-        spotify
-        proton-pass
-        protonvpn-gui
-        protonmail-desktop
-        parsec-bin
-        moonlight
-        qbittorrent
-        mpv
-        termius
-        inxi
+      imports = [
+        self.nixosModules.commonApps
+        self.nixosModules.commonServices
       ];
-
-      services.udisks2.enable = true;
-      services.devmon.enable = true;
     };
 }
