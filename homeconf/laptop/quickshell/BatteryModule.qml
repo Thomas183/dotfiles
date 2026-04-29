@@ -9,17 +9,16 @@ Rectangle {
     Layout.preferredHeight: 24
     Layout.preferredWidth:  battRow.implicitWidth + 20
     Layout.alignment:       Qt.AlignVCenter
-    Layout.rightMargin:     4
     radius: 5
     color:  battArea.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03)
 
     // Power-saver = green  /  balanced = blue  /  performance = red
-    property color profileColor: root.powerProfile === "power-saver" ? "#9ece6a"
+    property color profileColor : root.powerProfile === "power-saver" ? "#9ece6a"
                                 : root.powerProfile === "performance" ? root.colRed
                                 :                                       root.colBlue
 
     RowLayout {
-        id:              battRow
+        id:               battRow
         anchors.centerIn: parent
         spacing:          6
 
@@ -27,7 +26,7 @@ Rectangle {
         Item {
             Layout.alignment:       Qt.AlignVCenter
             Layout.preferredWidth:  26
-            Layout.preferredHeight: 12
+            Layout.preferredHeight: 13
 
             // Body outline
             Rectangle {
@@ -44,7 +43,7 @@ Rectangle {
                     width:   Math.max(2, (parent.width - 4) * (root.batteryLevel / 100))
                     radius:  1
                     color:   battModule.profileColor
-                    opacity: 0.75
+                    opacity: 0.6
 
                     Behavior on width { NumberAnimation { duration: 600; easing.type: Easing.OutCubic } }
                 }
@@ -54,8 +53,7 @@ Rectangle {
                     visible:          root.batteryCharging
                     anchors.centerIn: parent
                     text:             "⚡"
-                    font.pixelSize:   8
-                    color:            root.colFg
+                    font.pixelSize:   12
                 }
             }
 
@@ -63,7 +61,7 @@ Rectangle {
             Rectangle {
                 id:     battNub
                 anchors { right: parent.right; verticalCenter: parent.verticalCenter }
-                width: 3; height: 7; radius: 1
+                width: 3; height: 6; radius: 1
                 color:  battModule.profileColor
             }
         }
@@ -71,9 +69,9 @@ Rectangle {
         // ── Percentage label — ⚡ prefix when plugged in ───────────────────
         Text {
             Layout.alignment: Qt.AlignVCenter
-            text:           (root.batteryCharging ? "⚡" : "") + root.batteryLevel + "%"
+            text:           root.batteryLevel + "%"
             color:          battModule.profileColor
-            font.pixelSize: root.fontSize
+            font.pixelSize: 12
             font.family:    root.fontFamily
             font.bold:      true
         }
