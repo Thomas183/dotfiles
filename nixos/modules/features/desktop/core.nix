@@ -20,6 +20,8 @@
       };
     in
     {
+      security.rtkit.enable = true;
+
       # Audio: PipeWire replaces PulseAudio
       services.pipewire = {
         enable = true;

@@ -31,11 +31,14 @@
 
       nix.settings.download-buffer-size = 524288000; # 500 MiB
 
-      hardware.graphics.extraPackages = with pkgs; [
-        libva-vdpau-driver
-        libvdpau-va-gl
-        mesa
-      ];
+      hardware.graphics = {
+        enable = true;
+        extraPackages = with pkgs; [
+          mesa
+          libva-vdpau-driver
+          libvdpau-va-gl
+        ];
+      };
 
       services.power-profiles-daemon.enable = true;
 
