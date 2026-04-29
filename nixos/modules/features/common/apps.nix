@@ -3,6 +3,19 @@
 {
   flake.nixosModules.commonApps =
     { pkgs, config, lib, ... }:
+    let
+      # CEF (embedded Chromium) inside jellyfin-desktop breaks on Wayland with Mesa 26.
+      # Force XCB so Qt falls through to XWayland while other Qt apps stay on Wayland.
+      jellyfin-desktop-xcb = pkgs.symlinkJoin {
+        name = "jellyfin-desktop";
+        paths = [ pkgs.jellyfin-desktop ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/jellyfin-desktop \
+            --set QT_QPA_PLATFORM xcb
+        '';
+      };
+    in
     {
       environment.systemPackages =
         (with pkgs; [
@@ -17,10 +30,10 @@
           discord
           obs-studio
           whatsapp-electron
-          jellyfin-desktop
+          jellyfin-desktop-xcb
           spotify
           proton-pass
-          protonvpn-gui
+          proton-vpn
           protonmail-desktop
           parsec-bin
           moonlight
