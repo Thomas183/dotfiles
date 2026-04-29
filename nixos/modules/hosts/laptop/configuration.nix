@@ -31,11 +31,18 @@
 
       nix.settings.download-buffer-size = 524288000; # 500 MiB
 
+      hardware.graphics.extraPackages = with pkgs; [
+        libva-vdpau-driver
+        libvdpau-va-gl
+        mesa
+      ];
+
       services.power-profiles-daemon.enable = true;
 
       environment.systemPackages = with pkgs; [
         networkmanagerapplet
         brightnessctl
+        libva-utils
       ];
 
       boot.loader.systemd-boot.enable = true;
