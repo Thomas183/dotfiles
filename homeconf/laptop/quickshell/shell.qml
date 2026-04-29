@@ -32,7 +32,7 @@ ShellRoot {
 
     property int    batteryLevel:    0
     property bool   batteryCharging: false
-    property string powerProfile:    "balanced"
+    property string powerProfile:    "performance"   // "power-saver" | "balanced" | "performance"
 
     // Previous-tick values used to compute the CPU usage delta
     property int cpuPrevIdle:  0
