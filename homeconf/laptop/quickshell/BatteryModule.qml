@@ -71,7 +71,7 @@ Rectangle {
         // ── Percentage label — ⚡ prefix when plugged in ───────────────────
         Text {
             Layout.alignment: Qt.AlignVCenter
-            text:           (root.batteryCharging ? "⚡ " : "") + root.batteryLevel + "%"
+            text:           (root.batteryCharging ? "⚡" : "") + root.batteryLevel + "%"
             color:          battModule.profileColor
             font.pixelSize: root.fontSize
             font.family:    root.fontFamily
