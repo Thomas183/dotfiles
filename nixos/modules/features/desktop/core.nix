@@ -38,6 +38,14 @@
         ];
       };
 
+      services.flatpak.enable = true;
+      fonts.fontDir.enable = true;
+
+      fonts.packages = with pkgs; [
+        corefonts
+        vista-fonts
+      ];
+
       # Theme and cursor settings
       programs.dconf = {
         enable = true;
@@ -62,12 +70,14 @@
         XCURSOR_SIZE = "24";
         NIXOS_OZONE_WL = "1";
         QT_QPA_PLATFORM = "wayland;xcb";
+        XDG_DATA_DIRS = "/var/lib/flatpak/exports/share:/home/thomas/.local/share/flatpak/exports/share:\${XDG_DATA_DIRS}";
       };
 
       # Common desktop packages
       environment.systemPackages = with pkgs; [
         bibata-cursors
         cybrCyanThemes
+        host-spawn  # PTY-safe host command runner for Flatpak sandboxes
       ];
     };
 }

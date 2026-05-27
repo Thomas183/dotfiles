@@ -12,6 +12,7 @@
       environment.systemPackages = with pkgs; [
         steam
         prismlauncher
+        ckan
       ];
     };
 }

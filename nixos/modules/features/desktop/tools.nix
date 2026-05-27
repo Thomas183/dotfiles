@@ -10,6 +10,9 @@
         dunst
         thunar
         quickshell
+        drawing
+        postman
+        openssl
       ];
     };
 }

@@ -8,6 +8,7 @@
         (with pkgs; [
           symfony-cli
           php85
+          phpPackages.composer
           apacheHttpd
           nil
           nixd
@@ -25,6 +26,7 @@
           filezilla
           gnome-builder
           figma-linux
+          gnumake
         ]);
     };
 }

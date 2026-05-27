@@ -39,8 +39,9 @@ ShellRoot {
     property int cpuPrevTotal: 0
 
     // ── Panel visibility ──────────────────────────────────────────────────────
-    property bool controlPanelOpen: false   // the slide-down control panel
-    property bool wifiListOpen:     false   // wifi network list inside the panel
+    property bool controlPanelOpen:    false   // the slide-down control panel
+    property bool wifiListOpen:        false   // wifi network list inside the panel
+    property bool bluetoothListOpen:   false   // bluetooth device list inside the panel
 
     // ── Network state ─────────────────────────────────────────────────────────
     property bool   wifiEnabled:      true
@@ -53,6 +54,10 @@ ShellRoot {
     // user taps a network → prompt appears → they type a password → connectToWifi()
     property string connectTargetSsid:   ""
     property bool   wifiPasswordVisible: false
+
+    // ── Bluetooth state ───────────────────────────────────────────────────────
+    property bool bluetoothEnabled: false
+    property var  bluetoothDevices: []   // [{name, address, connected}]
 
     // ─────────────────────────────────────────────────────────────────────────
     // Background processes
@@ -227,6 +232,54 @@ ShellRoot {
     Process { id: wifiConnectProc }        // connects to an open or saved network
     Process { id: wifiConnectPassProc }    // connects with an explicit password
 
+    // Bluetooth radio state (powered yes/no).
+    // bluetoothctl in command-line mode exits before D-Bus is ready in BlueZ 5.86;
+    // piping commands through interactive mode is the reliable alternative.
+    Process {
+        id: bluetoothRadioStateProc
+        command: ["sh", "-c",
+            "printf 'show\\nexit\\n' | bluetoothctl 2>/dev/null" +
+            " | sed 's/\\x1b\\[[0-9;]*[a-zA-Z]//g'" +
+            " | awk '/^[[:space:]]*Powered:/{print $2; exit}'"]
+        stdout: SplitParser {
+            onRead: data => { if (data) bluetoothEnabled = data.trim() === "yes" }
+        }
+        Component.onCompleted: running = true
+    }
+
+    // Paired devices with connected status.
+    // Output format per line: "1|AA:BB:CC:DD:EE:FF|Device Name" (1=connected, 0=not)
+    Process {
+        id: bluetoothDevicesProc
+        command: ["sh", "-c",
+            "strip='s/\\x1b\\[[0-9;]*[a-zA-Z]//g';" +
+            "c=$(printf 'devices Connected\\nexit\\n' | bluetoothctl 2>/dev/null | sed \"$strip\" | awk '/^Device /{print $2}');" +
+            "printf 'devices Paired\\nexit\\n' | bluetoothctl 2>/dev/null | sed \"$strip\" | awk '/^Device /{print}' | while read _ a n; do " +
+            "  echo \"$c\" | grep -qF \"$a\" && echo \"1|$a|$n\" || echo \"0|$a|$n\";" +
+            "done"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const lines = text.trim().split("\n").filter(l => l.trim().length > 0)
+                const devs  = []
+                for (const line of lines) {
+                    const parts = line.split("|")
+                    if (parts.length < 3) continue
+                    const connected = parts[0] === "1"
+                    const address   = parts[1].trim()
+                    const name      = parts.slice(2).join("|").trim()
+                    if (!address || !name) continue
+                    devs.push({ name, address, connected })
+                }
+                devs.sort((a, b) => b.connected - a.connected)
+                bluetoothDevices = devs
+            }
+        }
+    }
+
+    Process { id: bluetoothRadioToggleProc }
+    Process { id: bluetoothConnectProc }
+    Process { id: bluetoothDisconnectProc }
+
     Process { id: shutdownProc; command: ["systemctl", "poweroff"] }
     Process { id: rebootProc;   command: ["systemctl", "reboot"]   }
 
@@ -322,12 +375,32 @@ ShellRoot {
         powerProfile = next
     }
 
+    function toggleBluetooth() {
+        const cmd = bluetoothEnabled ? "power off" : "power on"
+        bluetoothRadioToggleProc.command = ["sh", "-c", "printf '" + cmd + "\\nexit\\n' | bluetoothctl 2>/dev/null"]
+        bluetoothRadioToggleProc.running = true
+        bluetoothStateRefreshTimer.restart()
+    }
+
+    function connectBluetoothDevice(address) {
+        bluetoothConnectProc.command = ["sh", "-c", "printf 'connect " + address + "\\nexit\\n' | bluetoothctl 2>/dev/null"]
+        bluetoothConnectProc.running = true
+        bluetoothStateRefreshTimer.restart()
+    }
+
+    function disconnectBluetoothDevice(address) {
+        bluetoothDisconnectProc.command = ["sh", "-c", "printf 'disconnect " + address + "\\nexit\\n' | bluetoothctl 2>/dev/null"]
+        bluetoothDisconnectProc.running = true
+        bluetoothStateRefreshTimer.restart()
+    }
+
     // Close the control panel and reset all child views back to their defaults
     function closeAllPanels() {
         controlPanelOpen    = false
         wifiListOpen        = false
         wifiPasswordVisible = false
         connectTargetSsid   = ""
+        bluetoothListOpen   = false
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -365,6 +438,16 @@ ShellRoot {
         onTriggered: {
             wifiRadioStateProc.running = true
             if (wifiEnabled) wifiScanProc.running = true
+        }
+    }
+
+    // Re-read bluetooth radio state after a toggle; refresh device list if turning on.
+    Timer {
+        id:       bluetoothStateRefreshTimer
+        interval: 800
+        onTriggered: {
+            bluetoothRadioStateProc.running = true
+            if (bluetoothEnabled) bluetoothDevicesProc.running = true
         }
     }
 

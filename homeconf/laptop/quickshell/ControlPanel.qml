@@ -26,14 +26,16 @@ PanelWindow {
     onVisibleChanged: {
         if (visible) {
             // Refresh the date label and hardware readings each time we open
-            panelDateText.text         = Qt.formatDateTime(new Date(), "dddd, MMMM d yyyy")
-            brightnessReadProc.running = true
-            wifiRadioStateProc.running = true
+            panelDateText.text              = Qt.formatDateTime(new Date(), "dddd, MMMM d yyyy")
+            brightnessReadProc.running      = true
+            wifiRadioStateProc.running      = true
+            bluetoothRadioStateProc.running = true
         } else {
             // Reset child views so next open always starts on the main view
             root.wifiListOpen        = false
             root.wifiPasswordVisible = false
             root.connectTargetSsid   = ""
+            root.bluetoothListOpen   = false
         }
     }
 
@@ -52,9 +54,9 @@ PanelWindow {
         }
         Rectangle { Layout.fillWidth: true; height: 1; color: root.colMuted }
 
-        // ── Main view: brightness, volume, wifi toggle, power ─────────────────
+        // ── Main view: brightness, volume, wifi toggle, bluetooth toggle, power ──
         Item {
-            visible:          !root.wifiListOpen
+            visible:          !root.wifiListOpen && !root.bluetoothListOpen
             Layout.fillWidth: true
             implicitHeight:   mainView.implicitHeight
 
@@ -207,6 +209,62 @@ PanelWindow {
                             onClicked: {
                                 root.wifiListOpen    = true
                                 wifiScanProc.running = true
+                            }
+                        }
+                    }
+                }
+
+                // Bluetooth row: toggle radio on/off + button to open device list
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 8
+
+                    Rectangle {
+                        Layout.fillWidth: true; height: 32; radius: 4
+                        color: btToggleArea.containsMouse
+                               ? (root.bluetoothEnabled ? Qt.rgba(0.478, 0.635, 0.969, 0.15) : Qt.rgba(1, 1, 1, 0.08))
+                               : (root.bluetoothEnabled ? Qt.rgba(0.478, 0.635, 0.969, 0.08) : "transparent")
+                        border.color: root.bluetoothEnabled ? root.colBlue : root.colMuted
+                        border.width: 1
+                        Text {
+                            anchors.centerIn: parent
+                            text:           root.bluetoothEnabled ? "Bluetooth  ●  ON" : "Bluetooth  ○  OFF"
+                            color:          root.bluetoothEnabled ? root.colBlue : root.colMuted
+                            font.pixelSize: root.fontSize
+                            font.family:    root.fontFamily
+                            font.bold:      true
+                        }
+                        MouseArea {
+                            id:           btToggleArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked:    root.toggleBluetooth()
+                        }
+                    }
+
+                    // Open device list (only shown when radio is on)
+                    Rectangle {
+                        visible:      root.bluetoothEnabled
+                        width: 32; height: 32; radius: 4
+                        color:        btExpandArea.containsMouse ? Qt.rgba(0.478, 0.635, 0.969, 0.15)
+                                                                 : Qt.rgba(0.478, 0.635, 0.969, 0.08)
+                        border.color: root.colBlue
+                        border.width: 1
+                        Text {
+                            anchors.centerIn: parent
+                            text:           "▶"
+                            color:          root.colBlue
+                            font.pixelSize: root.fontSize - 2
+                            font.family:    root.fontFamily
+                            font.bold:      true
+                        }
+                        MouseArea {
+                            id:           btExpandArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked: {
+                                root.bluetoothListOpen       = true
+                                bluetoothDevicesProc.running = true
                             }
                         }
                     }
@@ -525,6 +583,146 @@ PanelWindow {
                 }
 
                 Item { height: 4 }  // bottom padding inside the panel
+            }
+        }
+
+        // ── Bluetooth device list ─────────────────────────────────────────────
+        Item {
+            visible:          root.bluetoothListOpen
+            Layout.fillWidth: true
+            implicitHeight:   btView.implicitHeight
+
+            ColumnLayout {
+                id: btView
+                anchors { left: parent.left; right: parent.right; top: parent.top }
+                spacing: 8
+
+                // Header: [←] Bluetooth [↻]
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    Rectangle {
+                        width: 28; height: 28; radius: 4
+                        color:        btBackBtnArea.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+                        border.color: root.colMuted
+                        border.width: 1
+                        Text {
+                            anchors.centerIn: parent
+                            text:           "←"
+                            color:          root.colMuted
+                            font.pixelSize: root.fontSize
+                            font.family:    root.fontFamily
+                            font.bold:      true
+                        }
+                        MouseArea {
+                            id:           btBackBtnArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked:    root.bluetoothListOpen = false
+                        }
+                    }
+
+                    Text {
+                        text:             "Bluetooth"
+                        color:            root.colBlue
+                        font.pixelSize:   root.fontSize
+                        font.family:      root.fontFamily
+                        font.bold:        true
+                        Layout.fillWidth: true
+                        leftPadding:      8
+                    }
+
+                    Text {
+                        text:           "↻"
+                        color:          btRefreshArea.containsMouse ? root.colFg : root.colMuted
+                        font.pixelSize: root.fontSize + 4
+                        font.family:    root.fontFamily
+                        MouseArea {
+                            id:           btRefreshArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked:    bluetoothDevicesProc.running = true
+                        }
+                    }
+                }
+
+                // Shown when no paired devices exist
+                Text {
+                    visible:          root.bluetoothDevices.length === 0
+                    text:             "No paired devices"
+                    color:            root.colMuted
+                    font.pixelSize:   root.fontSize
+                    font.family:      root.fontFamily
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                // Scrollable paired device list — connected devices first
+                ListView {
+                    id:               btDeviceList
+                    visible:          root.bluetoothDevices.length > 0
+                    Layout.fillWidth: true
+                    height:           Math.min(contentHeight, 220)
+                    clip:             true
+                    model:            root.bluetoothDevices
+                    spacing:          4
+
+                    ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+
+                    delegate: Rectangle {
+                        property var device: modelData
+                        width:  btDeviceList.width
+                        height: 36; radius: 4
+                        color:  btDeviceItemArea.containsMouse
+                                ? Qt.rgba(1, 1, 1, 0.05)
+                                : (device.connected ? Qt.rgba(0.478, 0.635, 0.969, 0.08) : "transparent")
+
+                        RowLayout {
+                            anchors { fill: parent; leftMargin: 8; rightMargin: 8 }
+                            spacing: 8
+
+                            // Connection status dot
+                            Text {
+                                text:           device.connected ? "●" : "○"
+                                color:          device.connected ? root.colBlue : root.colMuted
+                                font.pixelSize: root.fontSize
+                                font.family:    root.fontFamily
+                            }
+
+                            // Device name
+                            Text {
+                                text:             device.name
+                                color:            device.connected ? root.colBlue : root.colFg
+                                font.pixelSize:   root.fontSize
+                                font.family:      root.fontFamily
+                                font.bold:        device.connected
+                                Layout.fillWidth: true
+                                elide:            Text.ElideRight
+                            }
+
+                            // Connect / Disconnect hint
+                            Text {
+                                text:           device.connected ? "Disc." : "Conn."
+                                color:          root.colMuted
+                                font.pixelSize: root.fontSize - 2
+                                font.family:    root.fontFamily
+                            }
+                        }
+
+                        MouseArea {
+                            id:           btDeviceItemArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked: {
+                                if (device.connected)
+                                    root.disconnectBluetoothDevice(device.address)
+                                else
+                                    root.connectBluetoothDevice(device.address)
+                            }
+                        }
+                    }
+                }
+
+                Item { height: 4 }
             }
         }
     }
